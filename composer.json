@@ -1,0 +1,26 @@
+{
+    "name": "asar/asar-blog",
+    "type": "library",
+    "description": "A basic domain for a blog",
+    "minimum-stability": "alpha",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.0",
+        "doctrine/orm": ">=2.3.1",
+        "asar/dimple": "dev-master"
+    },
+    "authors" : [
+        {
+            "name": "Wayne Duran",
+            "email": "asartalo@projectweb.ph",
+            "role": "Developer",
+            "homepage": "http://www.asartalo.org"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Asar\\Tests\\Blog\\": "tests",
+            "Asar\\Blog": "src"
+        }
+    }
+}
