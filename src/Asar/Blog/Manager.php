@@ -99,6 +99,12 @@ class Manager
      */
     public function getBlog($id)
     {
+        if (is_int($id)) {
+            return $this->getEntityManager()
+                    ->getRepository('Asar\Blog\Blog')
+                    ->find($id);
+        }
+
         return $this->getEntityManager()
                     ->getRepository('Asar\Blog\Blog')
                     ->findOneBy(array('name' => $id));

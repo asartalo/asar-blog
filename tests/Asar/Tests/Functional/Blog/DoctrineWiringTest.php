@@ -44,12 +44,17 @@ class DoctrineWiringTest extends TestCase
         $tool->createSchema($classes);
     }
 
+    protected function createBasicBlog()
+    {
+        return $this->manager->newBlog('FooBlog', array('description' => 'The foo blog'));
+    }
+
     /**
      * Test creating a blog
      */
     public function testCreatingABlog()
     {
-        $blog = $this->manager->newBlog('FooBlog', array('description' => 'The foo blog'));
+        $blog = $this->createBasicBlog();
         $this->assertEquals('FooBlog', $blog->getName());
         $this->assertEquals('The foo blog', $blog->getDescription());
     }
@@ -59,10 +64,23 @@ class DoctrineWiringTest extends TestCase
      */
     public function testCommitsChanges()
     {
-        $this->manager->newBlog('FooBlog', array('description' => 'The foo blog'));
+        $blog = $this->createBasicBlog();
         $this->manager->commit();
         //$this->manager = Manager::createManager();
         $blog = $this->manager->getBlog('FooBlog');
+        $this->assertEquals('FooBlog', $blog->getName());
+        $this->assertEquals('The foo blog', $blog->getDescription());
+    }
+
+    /**
+     * Test getting a blog by id
+     */
+    public function testGetABlogById()
+    {
+        $blog = $this->createBasicBlog();
+        $this->manager->commit();
+        //$this->manager = Manager::createManager();
+        $blog = $this->manager->getBlog(1);
         $this->assertEquals('FooBlog', $blog->getName());
         $this->assertEquals('The foo blog', $blog->getDescription());
     }
