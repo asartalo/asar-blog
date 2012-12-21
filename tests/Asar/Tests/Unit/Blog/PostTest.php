@@ -81,4 +81,46 @@ class PostTest extends TestCase
         $this->assertEquals($thisDay->format('Y-m-d'), $this->post->getPublishDate()->format('Y-m-d'));
     }
 
+    /**
+     * Can get latest revision
+     */
+    public function testCanGetLatestRevision()
+    {
+        $this->assertInstanceOf('Asar\Blog\Post\Revision', $this->post->getLatestRevision());
+    }
+
+    /**
+     * The contents of the latest revision is the same as in creation
+     */
+    public function testTheContentsOfRevisionIsTheSameAsContentOnCreation()
+    {
+        $this->assertEquals(
+            'This is my first post ever.',
+            $this->post->getLatestRevision()->getContent()
+        );
+    }
+
+    /**
+     * The date of last revision date is the same as revision creation date
+     */
+    public function testTheRevisionDate()
+    {
+        $this->assertSame(
+            $this->post->getLatestRevision()->getDateCreated(),
+            $this->post->getLatestRevisionDate()
+        );
+    }
+
+    /**
+     * Creates another revision when content is edited
+     */
+    public function testCreatesNewRevisionWhenEditingContent()
+    {
+        $firstRevision = $this->post->getLatestRevision();
+        $this->post->setContent('foo');
+        $this->assertEquals('foo', $this->post->getContent());
+        $this->assertNotSame($firstRevision, $this->post->getLatestRevision());
+        $this->assertEquals('foo', $this->post->getLatestRevision()->getContent());
+    }
+
 }

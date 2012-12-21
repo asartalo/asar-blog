@@ -12,17 +12,36 @@ namespace Asar\Blog;
 
 /**
  * A blog
+ *
+ * @Entity
+ * @Table(name="blogs")
  */
 class Blog
 {
-    
+
+    /**
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+     * @var int
+     **/
+    private $id;
+
+    /**
+     * @Column(type="string", length=255, unique=true)
+     * @var string
+     **/
     private $name;
-    
+
+    /**
+     * @Column(type="text")
+     * @var text
+     **/
     private $description;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param string $name    the author name
      * @param array  $options other options and properties
      */
@@ -33,25 +52,25 @@ class Blog
             $this->description = $options['description'];
         }
     }
-    
+
     /**
      * Gets the blog name
-     * 
+     *
      * @return string blog name
      */
     public function getName()
     {
         return $this->name;
     }
-    
+
     /**
      * Gets the description
-     * 
+     *
      * @return string the blog description
      */
     public function getDescription()
     {
         return $this->description;
     }
-    
+
 }

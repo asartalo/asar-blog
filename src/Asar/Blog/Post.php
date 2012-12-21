@@ -10,24 +10,72 @@
 
 namespace Asar\Blog;
 
+use Asar\Blog\Post\Revision;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A blog post
+ *
+ * @Entity
+ * @Table(name="posts")
  */
 class Post
 {
 
+    /**
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+     * @var int
+     **/
+    private $id;
+
+    /**
+     * @Column(type="string")
+     * @var string
+     **/
     private $title;
 
+    /**
+     * @OneToOne(targetEntity="Asar\Blog\Author")
+     **/
+    private $author;
+
+
+    /**
+     * @ManyToOne(targetEntity="Asar\Blog\Blog")
+     * @JoinColumn(name="blog_id", referencedColumnName="id")
+     */
+    private $blog;
+
+    /**
+     * @Column(type="text")
+     * @var text
+     **/
     private $description;
 
+    /**
+     * @Column(type="text")
+     * @var text
+     **/
     private $content;
 
+    /**
+     * @Column(type="boolean")
+     * @var boolean
+     **/
     private $publishStatus = false;
 
+    /**
+     * @Column(type="datetime")
+     * @var datetime
+     **/
     private $datePublished;
 
+    /**
+     * @OneToMany(targetEntity="Asar\Blog\Post\Revision", mappedBy="post")
+     * @var Asar\Blog\Post\Revision[]
+     **/
     private $revisions;
 
     /**
@@ -44,10 +92,8 @@ class Post
         if (isset($options['description'])) {
             $this->description = $options['description'];
         }
-        if (isset($options['content'])) {
-            $this->content = $options['content'];
-        }
         $this->revisions = new ArrayCollection;
+        $this->setContent($options['content']);
     }
 
     /**
@@ -68,6 +114,17 @@ class Post
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Sets the content
+     *
+     * @param string $content the post content
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+        $this->revisions[] = new Revision($this->content, $this);
     }
 
     /**
@@ -117,6 +174,26 @@ class Post
     public function getPublishDate()
     {
         return $this->datePublished;
+    }
+
+    /**
+     * Gets the latest revision
+     *
+     * @return Revision the latest revision
+     */
+    public function getLatestRevision()
+    {
+        return $this->revisions->last();
+    }
+
+    /**
+     * Gets the latest revision date
+     *
+     * @return DateTime the date the post was last revised
+     */
+    public function getLatestRevisionDate()
+    {
+        return $this->getLatestRevision()->getDateCreated();
     }
 
 }
