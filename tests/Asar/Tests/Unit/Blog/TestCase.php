@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Asar\Tests\Blog;
+namespace Asar\Tests\Unit\Blog;
 
 /**
  * A helper class to wrap common test setups in one class for easier testing.

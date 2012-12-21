@@ -19,7 +19,8 @@
     ],
     "autoload": {
         "psr-0": {
-            "Asar\\Tests\\Blog\\": "tests",
+            "Asar\\Tests\\Unit\\Blog": "tests",
+            "Asar\\Tests\\Functional\\Blog": "tests",
             "Asar\\Blog": "src"
         }
     }
