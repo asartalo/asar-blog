@@ -24,15 +24,19 @@ class Post
     
     private $publishStatus = false;
     
+    private $datePublished;
+    
     /**
      * Constructor
      * 
      * @param string $title   the title of the post
+     * @param Author $author  the post author
      * @param array  $options other options and properties
      */
-    public function __construct($title, array $options=array())
+    public function __construct($title, Author $author, array $options=array())
     {
         $this->title = $title;
+        $this->author = $author;
         if (isset($options['description'])) {
             $this->description = $options['description'];
         }
@@ -86,6 +90,27 @@ class Post
      */
     public function publish()
     {
+        $this->datePublished = new \DateTime;
         $this->publishStatus = true;
+    }
+    
+    /**
+     * Gets the author of a post
+     * 
+     * @return Author the post author
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+    
+    /**
+     * Gets the publication date of post
+     * 
+     * @return DateTime the date the post was published
+     */
+    public function getPublishDate()
+    {
+        return $this->datePublished;
     }
 }
