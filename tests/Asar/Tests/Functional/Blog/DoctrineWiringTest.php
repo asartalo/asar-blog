@@ -85,4 +85,42 @@ class DoctrineWiringTest extends TestCase
         $this->assertEquals('The foo blog', $blog->getDescription());
     }
 
+    private function createTestAuthor()
+    {
+        return $this->manager->newAuthor('Pedro');
+    }
+
+    /**
+     * A new author
+     */
+    public function testNewAuthor()
+    {
+        $author = $this->createTestAuthor();
+        $this->assertInstanceOf('Asar\Blog\Author', $author);
+        $this->assertEquals('Pedro', $author->getName());
+    }
+
+    /**
+     * Getting an author by name
+     */
+    public function testGettingAnAuthor()
+    {
+        $blog = $this->createBasicBlog();
+        $this->createTestAuthor();
+        $this->manager->commit();
+        $author = $this->manager->getAuthor('Pedro');
+        $this->assertEquals('Pedro', $author->getName());
+    }
+
+    /**
+     * Writing a post
+     */
+    public function testWritingAPost()
+    {
+        $this->createBasicBlog();
+        $this->markTestIncomplete();
+        $this->manager->setBlog('FooBlog');
+        //$this->manager->
+    }
+
 }

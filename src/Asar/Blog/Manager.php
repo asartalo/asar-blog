@@ -38,7 +38,7 @@ class Manager
      */
     public static function createManager()
     {
-        $container = new Container(__DIR__ . DIRECTORY_SEPARATOR . 'services.php');
+        $container = self::createContainer();
 
         return new self($container->get('doctrine.entityManager'));
     }
@@ -50,10 +50,15 @@ class Manager
      */
     public static function createManagerForTest()
     {
-        $container = new Container(__DIR__ . DIRECTORY_SEPARATOR . 'services.php');
+        $container = self::createContainer();
         $container['isTestMode'] = true;
 
         return new self($container->get('doctrine.entityManager'));
+    }
+
+    protected static function createContainer()
+    {
+        return new Container(__DIR__ . DIRECTORY_SEPARATOR . 'services.php');
     }
 
     /**
@@ -99,15 +104,39 @@ class Manager
      */
     public function getBlog($id)
     {
+        $repository = $this->getEntityManager()->getRepository('Asar\Blog\Blog');
         if (is_int($id)) {
-            return $this->getEntityManager()
-                    ->getRepository('Asar\Blog\Blog')
-                    ->find($id);
+            return $repository->find($id);
         }
 
+        return $repository->findOneBy(array('name' => $id));
+    }
+
+    /**
+     * Creates a new author
+     *
+     * @param string $name the author name
+     */
+    public function newAuthor($name)
+    {
+        $author = new Author($name);
+        $this->getEntityManager()->persist($author);
+
+        return $author;
+    }
+
+    /**
+     * Gets an author based on name
+     *
+     * @param mixed $name the name of the author
+     *
+     * @return Author
+     */
+    public function getAuthor($name)
+    {
         return $this->getEntityManager()
-                    ->getRepository('Asar\Blog\Blog')
-                    ->findOneBy(array('name' => $id));
+                    ->getRepository('Asar\Blog\Author')
+                    ->findOneBy(array('name' => $name));
     }
 
 
