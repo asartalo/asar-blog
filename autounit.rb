@@ -23,13 +23,6 @@ watch('tests/.*Test\.php') do |md|
   phpunit(md[0])
 end
 
-# watch('tests/.*\.php') do |md|
-#   puts "\e[H\e[2J"  #clear console
-#   puts "Modified #{md[0]}\nRunning all tests..."
-#   puts ""
-#   system("phpunit tests")
-# end
-
 watch('src/Asar/(.*)\.(.*)') do |md|   # runs tests/ClassTest* whenever src/Class.php is changed
   clearConsole
   puts "Modified #{md[0]}"
