@@ -23,24 +23,29 @@ class Author
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-     * @var int
-     **/
+     */
     private $id;
 
     /**
      * @Column(type="string")
-     * @var string
-     **/
+     */
     private $name;
+
+    /**
+     * @Column(type="string", length=250, unique=true)
+     */
+    private $email;
 
     /**
      * Constructor
      *
-     * @param string $name the author name
+     * @param string $name  the author name
+     * @param string $email the author's email address
      */
-    public function __construct($name)
+    public function __construct($name, $email)
     {
         $this->name = $name;
+        $this->email = $email;
     }
 
     /**
@@ -51,6 +56,16 @@ class Author
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Gets the email
+     *
+     * @return string the author's email address
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
 }

@@ -82,18 +82,30 @@ class Post
      * Constructor
      *
      * @param string $title   the title of the post
+     * @param Blog   $blog    the blog this belongs to
      * @param Author $author  the post author
      * @param array  $options other options and properties
      */
-    public function __construct($title, Author $author, array $options=array())
+    public function __construct($title, Blog $blog, Author $author, array $options=array())
     {
         $this->title = $title;
+        $this->blog = $blog;
         $this->author = $author;
         if (isset($options['description'])) {
             $this->description = $options['description'];
         }
         $this->revisions = new ArrayCollection;
         $this->setContent($options['content']);
+    }
+
+    /**
+     * Sets a new title
+     *
+     * @param string $title the new title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 
     /**
@@ -104,6 +116,16 @@ class Post
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Sets the description
+     *
+     * @param string $description description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
 
     /**
@@ -164,6 +186,16 @@ class Post
     public function getAuthor()
     {
         return $this->author;
+    }
+
+    /**
+     * Gets the blog this post belongs to
+     *
+     * @return Blog the blog
+     */
+    public function getblog()
+    {
+        return $this->blog;
     }
 
     /**

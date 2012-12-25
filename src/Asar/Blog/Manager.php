@@ -21,6 +21,8 @@ class Manager
 
     private $entityManager;
 
+    private $currentBlog;
+
     /**
      * Constructor
      *
@@ -115,11 +117,14 @@ class Manager
     /**
      * Creates a new author
      *
-     * @param string $name the author name
+     * @param string $name  the author name
+     * @param string $email the author's email address
+     *
+     * @return Author the newly created author
      */
-    public function newAuthor($name)
+    public function newAuthor($name, $email)
     {
-        $author = new Author($name);
+        $author = new Author($name, $email);
         $this->getEntityManager()->persist($author);
 
         return $author;
@@ -137,6 +142,41 @@ class Manager
         return $this->getEntityManager()
                     ->getRepository('Asar\Blog\Author')
                     ->findOneBy(array('name' => $name));
+    }
+
+    /**
+     * Start managing a blog
+     *
+     * @param mixed $id blog name or id
+     */
+    public function manage($id)
+    {
+        $this->currentBlog = $this->getBlog($id);
+    }
+
+    /**
+     * Retrieves the currently managed blog
+     *
+     * @return Blog the currently managed blog
+     */
+    public function getCurrentBlog()
+    {
+        return $this->currentBlog;
+    }
+
+    /**
+     * Creates a new blog post
+     *
+     * @param string $title   the blog post's title
+     * @param array  $options other blog options
+     *
+     * @return Post the new blog post
+     */
+    public function newPost($title, array $options = array())
+    {
+        $author = $options['author'];
+
+        return new Post($title, $this->getCurrentBlog(), $author, $options);
     }
 
 

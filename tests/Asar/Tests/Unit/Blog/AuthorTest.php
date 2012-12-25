@@ -23,7 +23,7 @@ class AuthorTest extends TestCase
      */
     public function setUp()
     {
-        $this->author = new Author('Juan');
+        $this->author = new Author('Juan', 'juan@example.com');
     }
 
     /**
@@ -32,6 +32,14 @@ class AuthorTest extends TestCase
     public function testCanGetName()
     {
         $this->assertEquals('Juan', $this->author->getName());
+    }
+
+    /**
+     * Can get email
+     */
+    public function testGetEmail()
+    {
+        $this->assertEquals('juan@example.com', $this->author->getEmail());
     }
 
 }

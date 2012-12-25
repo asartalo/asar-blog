@@ -11,6 +11,7 @@
 namespace Asar\Tests\Unit\Blog;
 
 use Asar\Blog\Post;
+use Asar\Blog\Blog;
 use Asar\Blog\Author;
 
 /**
@@ -24,9 +25,11 @@ class PostTest extends TestCase
      */
     public function setUp()
     {
-        $this->author = new Author('Juan');
+        $this->author = new Author('Juan', 'juan@example.com');
+        $this->blog = new Blog('The Blog');
         $this->post = new Post(
             'My First Post',
+            $this->blog,
             $this->author,
             array(
                 'description' => 'This is my first post.',
@@ -41,9 +44,30 @@ class PostTest extends TestCase
     public function testCanGetBasicProperties()
     {
         $this->assertEquals('My First Post', $this->post->getTitle());
+        $this->assertSame($this->blog, $this->post->getBlog());
+        $this->assertSame($this->author, $this->post->getAuthor());
         $this->assertEquals('This is my first post.', $this->post->getDescription());
-        $this->assertEquals($this->author, $this->post->getAuthor());
         $this->assertEquals('This is my first post ever.', $this->post->getContent());
+    }
+
+    /**
+     * Can modify description
+     */
+    public function testCanModifyDescription()
+    {
+        $newDescription = 'The first post.';
+        $this->post->setDescription($newDescription);
+        $this->assertEquals($newDescription, $this->post->getDescription());
+    }
+
+    /**
+     * Can modify title
+     */
+    public function testCanModifyTitle()
+    {
+        $newTitle = 'The First Post';
+        $this->post->setTitle($newTitle);
+        $this->assertEquals($newTitle, $this->post->getTitle());
     }
 
     /**

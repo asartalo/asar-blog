@@ -20,7 +20,6 @@ use Doctrine\ORM\Tools\SchemaTool;
 class DoctrineWiringTest extends TestCase
 {
 
-
     /**
      * Setup
      */
@@ -87,7 +86,7 @@ class DoctrineWiringTest extends TestCase
 
     private function createTestAuthor()
     {
-        return $this->manager->newAuthor('Pedro');
+        return $this->manager->newAuthor('Pedro', 'pedro@example.com');
     }
 
     /**
@@ -118,9 +117,18 @@ class DoctrineWiringTest extends TestCase
     public function testWritingAPost()
     {
         $this->createBasicBlog();
-        $this->markTestIncomplete();
-        $this->manager->setBlog('FooBlog');
-        //$this->manager->
+        $author = $this->createTestAuthor();
+        $this->manager->commit();
+        $this->manager->manage('FooBlog');
+        $post = $this->manager->newPost(
+            'My first Post',
+            array(
+                'author' => $author,
+                'content' => 'Hello world!',
+            )
+        );
+        $this->assertEquals('My first Post', $post->getTitle());
+        $this->assertEquals($this->manager->getCurrentBlog(), $post->getBlog());
     }
 
 }

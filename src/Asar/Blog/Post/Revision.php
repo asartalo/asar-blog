@@ -53,8 +53,9 @@ class Revision
      *
      * @param string $content the contents of this revision
      * @param Post   $post    the parent post
+     * @param array  $options other options for this revision
      */
-    public function __construct($content, Post $post)
+    public function __construct($content, Post $post, array $options = array())
     {
         $this->content = $content;
         $this->post = $post;
