@@ -1,3 +1,4 @@
 vendor/*
+tests/data/temp/*
 composer.lock
-.c9revisions/*
+.c9revisions/*"

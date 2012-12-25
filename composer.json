@@ -10,6 +10,9 @@
         "asar/asar-config": "0.1",
         "asar/dimple": "dev-master"
     },
+    "require-dev": {
+        "asar/asar-test-helper": "dev-master"
+    },
     "authors" : [
         {
             "name": "Wayne Duran",

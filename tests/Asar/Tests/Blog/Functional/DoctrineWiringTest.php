@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Asar\Tests\Functional\Blog;
+namespace Asar\Tests\Blog\Functional;
 
+use Asar\TestHelper\TestCase;
 use Asar\Blog\Manager;
-use Asar\Tests\Unit\Blog\TestCase;
 use Doctrine\ORM\Tools\SchemaTool;
 
 /**

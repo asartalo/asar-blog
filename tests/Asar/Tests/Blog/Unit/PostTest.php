@@ -8,8 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Asar\Tests\Unit\Blog;
+namespace Asar\Tests\Blog\Unit;
 
+use Asar\TestHelper\TestCase;
 use Asar\Blog\Post;
 use Asar\Blog\Blog;
 use Asar\Blog\Author;
