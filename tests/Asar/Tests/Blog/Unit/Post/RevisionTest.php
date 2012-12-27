@@ -26,7 +26,22 @@ class RevisionTest extends TestCase
     public function setUp()
     {
         $this->post = $this->quickMock('Asar\Blog\Post');
-        $this->revision = new Revision('foo', $this->post);
+        $this->revision = new Revision(
+            $this->post,
+            array(
+                'summary' => 'summary',
+                'title'   => 'title',
+                'content' => 'foo'
+            )
+        );
+    }
+
+    /**
+     * Can get the title
+     */
+    public function testGettingTheTitle()
+    {
+        $this->assertEquals('title', $this->revision->getTitle());
     }
 
     /**
@@ -37,6 +52,13 @@ class RevisionTest extends TestCase
         $this->assertEquals('foo', $this->revision->getContent());
     }
 
+    /**
+     * Can get the summary
+     */
+    public function testGettingTheSummary()
+    {
+        $this->assertEquals('summary', $this->revision->getSummary());
+    }
 
     /**
      * Sets creation date

@@ -167,16 +167,14 @@ class Manager
     /**
      * Creates a new blog post
      *
-     * @param string $title   the blog post's title
+     * @param Author $author  the blog post's author
      * @param array  $options other blog options
      *
      * @return Post the new blog post
      */
-    public function newPost($title, array $options = array())
+    public function newPost($author, array $options = array())
     {
-        $author = $options['author'];
-
-        return new Post($title, $this->getCurrentBlog(), $author, $options);
+        return new Post($this->getCurrentBlog(), $author, $options);
     }
 
 

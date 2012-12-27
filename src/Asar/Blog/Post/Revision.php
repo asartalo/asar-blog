@@ -30,6 +30,8 @@ class Revision
      **/
     private $id;
 
+    private $title;
+
     /**
      * @Column(type="text")
      * @var text
@@ -51,15 +53,26 @@ class Revision
     /**
      * Constructor
      *
-     * @param string $content the contents of this revision
-     * @param Post   $post    the parent post
-     * @param array  $options other options for this revision
+     * @param Post  $post    the parent post
+     * @param array $options other options for this revision
      */
-    public function __construct($content, Post $post, array $options = array())
+    public function __construct(Post $post, array $options)
     {
-        $this->content = $content;
         $this->post = $post;
+        $this->title = $options['title'];
+        $this->summary = $options['summary'];
+        $this->content = $options['content'];
         $this->created = new DateTime;
+    }
+
+    /**
+     * Returns the title of the revision
+     *
+     * @return string the revision title
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     /**
@@ -70,6 +83,16 @@ class Revision
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Returns the summary for the revision
+     *
+     * @return string the summary
+     */
+    public function getSummary()
+    {
+        return $this->summary;
     }
 
     /**

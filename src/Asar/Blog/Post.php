@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @Entity
  * @Table(name="posts")
+ * @HasLifecycleCallbacks
  */
 class Post
 {
@@ -52,7 +53,7 @@ class Post
      * @Column(type="text")
      * @var text
      **/
-    private $description;
+    private $summary;
 
     /**
      * @Column(type="text")
@@ -78,34 +79,31 @@ class Post
      **/
     private $revisions;
 
+    private $revisionParts = array('title', 'summary', 'content');
+
     /**
      * Constructor
      *
-     * @param string $title   the title of the post
      * @param Blog   $blog    the blog this belongs to
      * @param Author $author  the post author
      * @param array  $options other options and properties
      */
-    public function __construct($title, Blog $blog, Author $author, array $options=array())
+    public function __construct(Blog $blog, Author $author, array $options=array())
     {
-        $this->title = $title;
         $this->blog = $blog;
         $this->author = $author;
-        if (isset($options['description'])) {
-            $this->description = $options['description'];
+        if (isset($options['summary'])) {
+            $this->summary = $options['summary'];
         }
         $this->revisions = new ArrayCollection;
-        $this->setContent($options['content']);
+        $this->newRevision($options);
     }
 
-    /**
-     * Sets a new title
-     *
-     * @param string $title the new title
-     */
-    public function setTitle($title)
+    private function newRevision($options)
     {
-        $this->title = $title;
+        $this->revisions[] = new Revision(
+            $this, $options
+        );
     }
 
     /**
@@ -115,38 +113,17 @@ class Post
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->getLatestRevision()->getTitle();
     }
 
     /**
-     * Sets the description
+     * Gets the post summary
      *
-     * @param string $description description
+     * @return string the post summary
      */
-    public function setDescription($description)
+    public function getSummary()
     {
-        $this->description = $description;
-    }
-
-    /**
-     * Gets the description
-     *
-     * @return string the blog description
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Sets the content
-     *
-     * @param string $content the post content
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-        $this->revisions[] = new Revision($this->content, $this);
+        return $this->getLatestRevision()->getSummary();
     }
 
     /**
@@ -156,7 +133,7 @@ class Post
      */
     public function getContent()
     {
-        return $this->content;
+        return $this->getLatestRevision()->getContent();
     }
 
     /**
@@ -216,6 +193,43 @@ class Post
     public function getLatestRevision()
     {
         return $this->revisions->last();
+    }
+
+    /**
+     * Edit this post
+     *
+     * @param array $options the post content options
+     */
+    public function edit($options = array())
+    {
+        if ($this->isOptionsNotEmpty($options)) {
+            if (!isset($options['title'])) {
+                $options['title'] = $this->getTitle();
+            }
+            if (!isset($options['summary'])) {
+                $options['summary'] = $this->getSummary();
+            }
+            if (!isset($options['content'])) {
+                $options['content'] = $this->getContent();
+            }
+            $this->newRevision($options);
+        }
+    }
+
+    private function isOptionsNotEmpty($options)
+    {
+        if (empty($options)) {
+            return false;
+        }
+        $notCompletelyEmpty = false;
+        foreach ($this->revisionParts as $part) {
+            if (isset($options[$part]) && !empty($options[$part])) {
+                $notCompletelyEmpty = true;
+                break;
+            }
+        }
+
+        return $notCompletelyEmpty;
     }
 
     /**

@@ -121,9 +121,10 @@ class DoctrineWiringTest extends TestCase
         $this->manager->commit();
         $this->manager->manage('FooBlog');
         $post = $this->manager->newPost(
-            'My first Post',
+            $author,
             array(
-                'author' => $author,
+                'title' => 'My first Post',
+                'summary' => 'Hello',
                 'content' => 'Hello world!',
             )
         );
