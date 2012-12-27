@@ -23,10 +23,11 @@ watch('tests/.*Test\.php') do |md|
   phpunit(md[0])
 end
 
-watch('src/Asar/(.*)\.(.*)') do |md|   # runs tests/ClassTest* whenever src/Class.php is changed
+watch('src/Asar/Blog/(.*)\.(.*)') do |md|   # runs tests/ClassTest* whenever src/Class.php is changed
   clearConsole
   puts "Modified #{md[0]}"
-  testpath = 'tests/Asar/Tests/Unit/' + md[1].sub(/./) { |s| s.upcase } + 'Test.php'
+  testpath = 'tests/Asar/Tests/Blog/Unit/' + md[1].sub(/./) { |s| s.upcase } + 'Test.php'
+  puts testpath
   if (md[2] == 'php' and File.exist?(testpath))
     puts "Running #{testpath}...\n"
     phpunit(testpath)
