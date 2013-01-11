@@ -204,4 +204,18 @@ class PostTest extends TestCase
         );
     }
 
+    /**
+     * Can categorize a post
+     */
+    public function testCanCategorizeAPost()
+    {
+        $this->category1 = $this->quickMock('Asar\Blog\Category');
+        $this->category2 = $this->quickMock('Asar\Blog\Category');
+        $this->post->addCategory($this->category1, $this->category2);
+        $categories = $this->post->getCategories();
+        $this->assertContains($this->category1, $categories);
+        $this->assertContains($this->category2, $categories);
+    }
+
+
 }

@@ -174,8 +174,65 @@ class Manager
      */
     public function newPost($author, array $options = array())
     {
-        return new Post($this->getCurrentBlog(), $author, $options);
+        $post = new Post($this->getCurrentBlog(), $author, $options);
+        $this->getEntityManager()->persist($post->getLatestRevision());
+        $this->getEntityManager()->persist($post);
+
+        return $post;
     }
 
+    /**
+     * Creates a category
+     *
+     * @param string $name the category name
+     *
+     * @return Category the new category
+     */
+    public function newCategory($name)
+    {
+        $category = new Category($this->getCurrentBlog(), $name);
+        $this->getEntityManager()->persist($category);
+
+        return $category;
+    }
+
+    /**
+     * Adds a post to a category
+     *
+     * @param string $categoryName the name of category to add to
+     * @param Post   $post         the blog post
+     */
+    public function addToCategory($categoryName, Post $post)
+    {
+        $category = $this->getEntityManager()
+            ->getRepository('Asar\Blog\Category')
+            ->findOneBy(array('name' => $categoryName));
+        $categorization = new Categorization($category, $post);
+        $this->getEntityManager()->persist($categorization);
+    }
+
+    /**
+     * Retrieves all post for a category
+     *
+     * @param string $categoryName the name of the category
+     *
+     * @return ArrayCollection $posts the posts in the category
+     */
+    public function getPostsInCategory($categoryName)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->add('select', 'post');
+        $qb->add('from', 'Asar\Blog\Post post');
+
+        $qb->leftJoin('post.categorization', 'categorization');
+        $qb->leftJoin('categorization.category', 'category');
+        $qb->add('where', 'category.name = ?1');
+        $qb->setParameter(1, $categoryName);
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
 
 }

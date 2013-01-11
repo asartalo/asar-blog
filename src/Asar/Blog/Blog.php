@@ -23,19 +23,16 @@ class Blog
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-     * @var int
      **/
     private $id;
 
     /**
      * @Column(type="string", length=255, unique=true)
-     * @var string
      **/
     private $name;
 
     /**
      * @Column(type="text")
-     * @var text
      **/
     private $description;
 

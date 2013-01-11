@@ -27,21 +27,13 @@ class Post
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-     * @var int
-     **/
+     */
     private $id;
 
     /**
-     * @Column(type="string")
-     * @var string
-     **/
-    private $title;
-
-    /**
-     * @OneToOne(targetEntity="Asar\Blog\Author")
-     **/
+     * @ManyToOne(targetEntity="Asar\Blog\Author")
+     */
     private $author;
-
 
     /**
      * @ManyToOne(targetEntity="Asar\Blog\Blog")
@@ -50,33 +42,23 @@ class Post
     private $blog;
 
     /**
-     * @Column(type="text")
-     * @var text
-     **/
-    private $summary;
-
-    /**
-     * @Column(type="text")
-     * @var text
-     **/
-    private $content;
+     * @OneToMany(targetEntity="Asar\Blog\Categorization", mappedBy="post")
+     */
+    private $categorization;
 
     /**
      * @Column(type="boolean")
-     * @var boolean
-     **/
+     */
     private $publishStatus = false;
 
     /**
-     * @Column(type="datetime")
-     * @var datetime
-     **/
+     * @Column(type="datetime", nullable=true)
+     */
     private $datePublished;
 
     /**
      * @OneToMany(targetEntity="Asar\Blog\Post\Revision", mappedBy="post")
-     * @var Asar\Blog\Post\Revision[]
-     **/
+     */
     private $revisions;
 
     private $revisionParts = array('title', 'summary', 'content');
@@ -92,11 +74,19 @@ class Post
     {
         $this->blog = $blog;
         $this->author = $author;
-        if (isset($options['summary'])) {
-            $this->summary = $options['summary'];
-        }
         $this->revisions = new ArrayCollection;
+        $this->categories = new ArrayCollection;
         $this->newRevision($options);
+    }
+
+    /**
+     * Returns the id
+     *
+     * @return integer the post id;
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     private function newRevision($options)
@@ -193,6 +183,29 @@ class Post
     public function getLatestRevision()
     {
         return $this->revisions->last();
+    }
+
+    /**
+     * Adds a category to the post
+     *
+     * @param Category $category the category to add to
+     */
+    public function addCategory(Category $category)
+    {
+        $categories = func_get_args();
+        foreach ($categories as $category) {
+            $this->categories[] = $category;
+        }
+    }
+
+    /**
+     * Returns the categories of the post
+     *
+     * @return ArrayAccess the post categories
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 
     /**

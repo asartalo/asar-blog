@@ -26,15 +26,21 @@ class Revision
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-     * @var int
      **/
     private $id;
 
+    /**
+     * @Column(type="string")
+     **/
     private $title;
 
     /**
      * @Column(type="text")
-     * @var text
+     **/
+    private $summary;
+
+    /**
+     * @Column(type="text")
      **/
     private $content;
 
@@ -45,7 +51,6 @@ class Revision
 
     /**
      * @Column(type="datetime")
-     * @var datetime
      **/
     private $created;
 
