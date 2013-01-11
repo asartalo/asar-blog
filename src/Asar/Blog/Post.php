@@ -61,6 +61,11 @@ class Post
      */
     private $revisions;
 
+    /**
+     * @OneToOne(targetEntity="Asar\Blog\Post\Revision", mappedBy="post")
+     */
+    private $latestRevision;
+
     private $revisionParts = array('title', 'summary', 'content');
 
     /**
@@ -91,9 +96,9 @@ class Post
 
     private function newRevision($options)
     {
-        $this->revisions[] = new Revision(
-            $this, $options
-        );
+        $revision = new Revision($this, $options);
+        $this->revisions[] = $revision;
+        $this->latestRevision = $revision;
     }
 
     /**
@@ -182,7 +187,7 @@ class Post
      */
     public function getLatestRevision()
     {
-        return $this->revisions->last();
+        return $this->latestRevision;
     }
 
     /**
