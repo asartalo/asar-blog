@@ -8,7 +8,7 @@
         "php": ">=5.3.0",
         "doctrine/orm": ">=2.3.1",
         "asar/asar-config": "0.1",
-        "asar/dimple": "dev-master"
+        "asar/dimple": ">=0.2"
     },
     "require-dev": {
         "asar/asar-test-helper": "dev-master"
