@@ -170,4 +170,27 @@ class DoctrineWiringTest extends TestCase
         $this->assertEquals($post2, $posts[0]);
     }
 
+    /**
+     * Retrieving all posts
+     */
+    public function testGetAllPosts()
+    {
+        $this->createBasicBlog();
+        $this->createTestAuthor();
+        $this->manager->commit();
+        $this->manager->manage('FooBlog');
+        $this->manager->newCategory('fooCategory');
+        $this->manager->commit();
+        $author = $this->manager->getAuthor('Pedro');
+        $post1 = $this->writeAPost($author);
+        $post2 = $this->writeAPost($author, "Woo");
+        $this->manager->addToCategory('fooCategory', $post2);
+        $this->manager->commit();
+
+        $posts = $this->manager->getPosts();
+        $this->assertEquals(2, count($posts));
+        $this->assertEquals($post1, $posts[0]);
+        $this->assertEquals($post2, $posts[1]);
+    }
+
 }

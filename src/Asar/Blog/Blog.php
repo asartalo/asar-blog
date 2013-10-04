@@ -61,6 +61,16 @@ class Blog
     }
 
     /**
+     * Retrieves the id
+     *
+     * @return integer the blog id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Gets the description
      *
      * @return string the blog description

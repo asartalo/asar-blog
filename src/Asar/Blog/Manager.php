@@ -63,6 +63,11 @@ class Manager
         return new Container(__DIR__ . DIRECTORY_SEPARATOR . 'services.php');
     }
 
+    /**
+     * Get the services definition
+     *
+     * @return string the path to the services definition file
+     */
     public static function getServicesPath()
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'services.php';
@@ -217,6 +222,25 @@ class Manager
     }
 
     /**
+     * Retrieves all posts
+     *
+     * @return ArrayCollection $posts the posts in the current blog
+     */
+    public function getPosts()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->add('select', 'post');
+        $qb->add('from', 'Asar\Blog\Post post');
+        $qb->add('where', 'post.blog = ?1');
+        $qb->setParameter(1, $this->getCurrentBlog()->getId());
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
      * Retrieves all post for a category
      *
      * @param string $categoryName the name of the category
@@ -232,8 +256,9 @@ class Manager
 
         $qb->leftJoin('post.categorization', 'categorization');
         $qb->leftJoin('categorization.category', 'category');
-        $qb->add('where', 'category.name = ?1');
-        $qb->setParameter(1, $categoryName);
+        $qb->add('where', 'post.blog = ?1 AND category.name = ?2');
+        $qb->setParameter(1, $this->getCurrentBlog()->getId());
+        $qb->setParameter(2, $categoryName);
 
         $query = $qb->getQuery();
 
