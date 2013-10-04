@@ -63,6 +63,11 @@ class Manager
         return new Container(__DIR__ . DIRECTORY_SEPARATOR . 'services.php');
     }
 
+    protected static function getServicesPath()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'services.php';
+    }
+
     /**
      * Returns the entity manager
      *
