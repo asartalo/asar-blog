@@ -222,9 +222,31 @@ class Manager
     }
 
     /**
+     * Retrieves a post
+     *
+     * @param integer $id the post id
+     *
+     * @return Post the post
+     */
+    public function getPost($id)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->add('select', 'post');
+        $qb->add('from', 'Asar\Blog\Post post');
+        $qb->add('where', 'post.blog = ?1 AND post.id = ?2');
+        $qb->setParameter(1, $this->getCurrentBlog()->getId());
+        $qb->setParameter(2, $id);
+
+        $result = $qb->getQuery()->getResult();
+
+        return $result[0];
+    }
+
+    /**
      * Retrieves all posts
      *
-     * @return ArrayCollection $posts the posts in the current blog
+     * @return ArrayCollection the posts in the current blog
      */
     public function getPosts()
     {

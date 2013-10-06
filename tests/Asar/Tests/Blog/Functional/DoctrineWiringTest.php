@@ -138,6 +138,21 @@ class DoctrineWiringTest extends TestCase
     }
 
     /**
+     * Retrieving a post
+     */
+    public function testRetrievingAPost()
+    {
+        $this->createBasicBlog();
+        $author = $this->createTestAuthor();
+        $this->manager->commit();
+        $this->writeAPost($author);
+        $this->manager->commit();
+        $post = $this->manager->getPost(1);
+        $this->assertEquals('My first Post', $post->getTitle());
+        $this->assertEquals($this->manager->getCurrentBlog(), $post->getBlog());
+    }
+
+    /**
      * Creating a category
      */
     public function testCreatingACategory()
