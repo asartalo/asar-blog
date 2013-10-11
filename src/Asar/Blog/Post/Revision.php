@@ -50,7 +50,7 @@ class Revision
     private $post;
 
     /**
-     * @OneToOne(targetEntity="Asar\Blog\Post", inversedBy="latestRevision")
+     * @OneToOne(targetEntity="Asar\Blog\Post", mappedBy="latestRevision")
      **/
     private $latestRevisionOfPost;
 
