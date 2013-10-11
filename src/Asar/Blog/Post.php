@@ -270,14 +270,19 @@ class Post implements PostInterface
     public function edit($options = array())
     {
         if ($this->isOptionsNotEmpty($options)) {
-            if (!isset($options['title'])) {
-                $options['title'] = $this->getTitle();
+            $fieldsAndDefaults = array(
+                'title' => 'getTitle',
+                'slug' => 'getSlug',
+                'summary' => 'getSummary',
+                'content' => 'getContent'
+            );
+            foreach ($fieldsAndDefaults as $field => $default) {
+                if (!isset($options[$field]) || empty($options[$field])) {
+                    $options[$field] = $this->$default();
+                }
             }
-            if (!isset($options['summary'])) {
-                $options['summary'] = $this->getSummary();
-            }
-            if (!isset($options['content'])) {
-                $options['content'] = $this->getContent();
+            if ($options['slug']) {
+                $this->setSlug($options['slug']);
             }
             $this->newRevision($options);
         }

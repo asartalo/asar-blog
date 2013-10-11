@@ -65,14 +65,17 @@ class PostTest extends TestCase
     public function testCanEditAPost()
     {
         $newTitle = 'The First Post';
+        $newSlug = 'the-first-slug-post';
         $newSummary = 'The first post.';
         $newContent = 'This is the new content';
         $this->post->edit(array(
             'title' => $newTitle,
+            'slug' => $newSlug,
             'summary' => $newSummary,
             'content' => $newContent
         ));
         $this->assertEquals($newSummary, $this->post->getSummary(), 'Unable to edit summary');
+        $this->assertEquals($newSlug, $this->post->getSlug(), 'Unable to edit slug');
         $this->assertEquals($newTitle, $this->post->getTitle(), 'Unable to edit title');
         $this->assertEquals($newContent, $this->post->getContent());
     }
