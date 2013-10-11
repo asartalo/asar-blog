@@ -50,6 +50,11 @@ class Revision
     private $post;
 
     /**
+     * @OneToOne(targetEntity="Asar\Blog\Post", inversedBy="latestRevision")
+     **/
+    private $latestRevisionOfPost;
+
+    /**
      * @Column(type="datetime")
      **/
     private $created;
