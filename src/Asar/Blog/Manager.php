@@ -178,7 +178,7 @@ class Manager
      * Creates a new blog post
      *
      * @param Author $author  the blog post's author
-     * @param array  $options other blog options
+     * @param array  $options post options
      *
      * @return Post the new blog post
      */
@@ -241,6 +241,20 @@ class Manager
         $result = $qb->getQuery()->getResult();
 
         return $result[0];
+    }
+
+    /**
+     * Edits a post
+     *
+     * @param mixed $post    the post or post id
+     * @param array $options post options
+     */
+    public function editPost($post, array $options)
+    {
+        $postToEdit = $this->getPost($post);
+        $postToEdit->edit($options);
+        $newRevision = $post->getLatestRevision();
+        $this->getEntityManager()->persist($newRevision);
     }
 
     /**

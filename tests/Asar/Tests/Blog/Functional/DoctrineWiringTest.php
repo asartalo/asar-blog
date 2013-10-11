@@ -138,6 +138,30 @@ class DoctrineWiringTest extends TestCase
     }
 
     /**
+     * Editing a post
+     */
+    public function testEditingAPost()
+    {
+        $this->createBasicBlog();
+        $author = $this->createTestAuthor();
+        $this->manager->commit();
+        $post = $this->writeAPost($author);
+        $this->manager->commit();
+        $id = $post->getId();
+        $this->manager->editPost(
+            $post,
+            array(
+                'title' => 'Yellow',
+                'summary' => 'Yellow',
+                'content' => 'Yellow world!',
+            )
+        );
+        $this->manager->commit();
+        $post = $this->manager->getPost($id);
+        $this->assertEquals('Yellow', $post->getTitle());
+    }
+
+    /**
      * Retrieving a post
      */
     public function testRetrievingAPost()
