@@ -178,6 +178,17 @@ class DoctrineWiringTest extends TestCase
     }
 
     /**
+     * Retrieving a non-existent post
+     */
+    public function testRetrievingAnUknownPost()
+    {
+        $this->contextBasicBlog();
+        $this->manager->commit();
+        $this->manager->manage('FooBlog');
+        $this->assertTrue($this->manager->getPost(1)->isNull());
+    }
+
+    /**
      * Creating a category
      */
     public function testCreatingACategory()

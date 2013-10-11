@@ -239,6 +239,9 @@ class Manager
            ->setParameter(':post', $id);
 
         $result = $qb->getQuery()->getResult();
+        if (count($result) == 0) {
+            return new NullPost;
+        }
 
         return $result[0];
     }

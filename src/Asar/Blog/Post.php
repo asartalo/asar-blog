@@ -20,7 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @Table(name="posts")
  * @HasLifecycleCallbacks
  */
-class Post
+class Post implements PostInterface
 {
 
     /**
@@ -92,6 +92,14 @@ class Post
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return boolean Whether this is a null post
+     */
+    public function isNull()
+    {
+        return false;
     }
 
     private function newRevision($options)

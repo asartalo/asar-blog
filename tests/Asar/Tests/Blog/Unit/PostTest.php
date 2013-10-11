@@ -40,6 +40,14 @@ class PostTest extends TestCase
     }
 
     /**
+     * Is not null
+     */
+    public function testNotNull()
+    {
+        $this->assertFalse($this->post->isNull());
+    }
+
+    /**
      * Can get basic properties
      */
     public function testCanGetBasicProperties()
