@@ -32,7 +32,7 @@ class PostTest extends TestCase
             $this->blog,
             $this->author,
             array(
-                'title' => 'My First Post',
+                'title' => 'My First Post. Great!',
                 'summary' => 'This is my first post.',
                 'content' => 'This is my first post ever.'
             )
@@ -52,7 +52,7 @@ class PostTest extends TestCase
      */
     public function testCanGetBasicProperties()
     {
-        $this->assertEquals('My First Post', $this->post->getTitle());
+        $this->assertEquals('My First Post. Great!', $this->post->getTitle());
         $this->assertSame($this->blog, $this->post->getBlog());
         $this->assertSame($this->author, $this->post->getAuthor());
         $this->assertEquals('This is my first post.', $this->post->getSummary());
@@ -210,6 +210,23 @@ class PostTest extends TestCase
             $this->post->getLatestRevision()->getDateCreated(),
             $this->post->getLatestRevisionDate()
         );
+    }
+
+    /**
+     * Creates a post slug
+     */
+    public function testPostSlug()
+    {
+        $this->assertEquals('my-first-post-great', $this->post->getSlug());
+    }
+
+    /**
+     * Slug can be set
+     */
+    public function testEditPostSlug()
+    {
+        $this->post->setSlug('FOO Bar!!! Yadayada hee--hee');
+        $this->assertEquals('foo-bar-yadayada-hee-hee', $this->post->getSlug());
     }
 
     /**

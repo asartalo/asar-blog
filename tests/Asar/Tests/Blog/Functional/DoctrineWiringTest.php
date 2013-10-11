@@ -189,6 +189,21 @@ class DoctrineWiringTest extends TestCase
     }
 
     /**
+     * Retrieving a post via slug
+     */
+    public function testRetrievingAPostViaSlug()
+    {
+        $this->contextBasicBlog();
+        $author = $this->createTestAuthor();
+        $this->manager->commit();
+        $this->writeAPost($author);
+        $this->manager->commit();
+        $post = $this->manager->getPost('my-first-post');
+        $this->assertEquals('My first Post', $post->getTitle());
+        $this->assertEquals($this->manager->getCurrentBlog(), $post->getBlog());
+    }
+
+    /**
      * Creating a category
      */
     public function testCreatingACategory()
@@ -267,7 +282,7 @@ class DoctrineWiringTest extends TestCase
     {
         $this->contextBlogWithTwoPostsOneInACategory();
 
-        $post3 = $this->writeAPost($this->author, "Woo");
+        $post3 = $this->writeAPost($this->author, "Woo2");
         $this->manager->addToCategory('fooCategory', $post3);
         $this->post2->publish();
         $this->manager->commit();

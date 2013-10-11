@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * A blog post
  *
  * @Entity
- * @Table(name="posts")
+ * @Table(name="posts", indexes={@Index(name="slug_idx", columns={"slug"})}, uniqueConstraints={@UniqueConstraint(name="slug_blog_idx", columns={"blog_id", "slug"})})
  * @HasLifecycleCallbacks
  */
 class Post implements PostInterface
@@ -66,6 +66,11 @@ class Post implements PostInterface
      */
     private $latestRevision;
 
+    /**
+     * @Column(type="string", nullable=true)
+     **/
+    private $slug;
+
     private $revisionParts = array('title', 'summary', 'content');
 
     /**
@@ -82,6 +87,9 @@ class Post implements PostInterface
         $this->revisions = new ArrayCollection;
         $this->categories = new ArrayCollection;
         $this->newRevision($options);
+        if (!$this->slug) {
+            $this->slug = $this->createSlug();
+        }
     }
 
     /**
@@ -117,6 +125,39 @@ class Post implements PostInterface
     public function getTitle()
     {
         return $this->getLatestRevision()->getTitle();
+    }
+
+    /**
+     * Sets the post slug
+     *
+     * @param string $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $this->slugify($slug);
+    }
+
+    /**
+     * Gets the post slug
+     *
+     * @return string post slug
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    private function createSlug()
+    {
+        return $this->slugify($this->getTitle());
+    }
+
+    private function slugify($slug)
+    {
+        return trim(
+            preg_replace('/\W+/', '-', strtolower($slug)),
+            "- \t\n\r\0\x0B"
+        );
     }
 
     /**

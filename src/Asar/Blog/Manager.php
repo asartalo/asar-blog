@@ -224,7 +224,7 @@ class Manager
     /**
      * Retrieves a post
      *
-     * @param integer $id the post id
+     * @param mixed $id the post id or slug
      *
      * @return Post the post
      */
@@ -232,9 +232,15 @@ class Manager
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
+        if (is_int($id) || is_object($id)) {
+            $reference = 'id';
+        } else {
+            $reference = 'slug';
+        }
+
         $qb->select('post')
            ->from('Asar\Blog\Post', 'post')
-           ->where('post.blog = :blog AND post.id = :post')
+           ->where("post.blog = :blog AND post.$reference = :post")
            ->setParameter(':blog', $this->getCurrentBlog()->getId())
            ->setParameter(':post', $id);
 
