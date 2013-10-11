@@ -278,7 +278,8 @@ class Manager
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('post')
-           ->from('Asar\Blog\Post', 'post');
+           ->from('Asar\Blog\Post', 'post')
+           ->orderBy('post.datePublished', 'DESC');
         $this->generatePostQueryOptions($qb, $options);
 
         return $qb->getQuery()->getResult();
@@ -329,7 +330,8 @@ class Manager
         $qb->select('post')
            ->from('Asar\Blog\Post', 'post')
            ->leftJoin('post.categorization', 'categorization')
-           ->leftJoin('categorization.category', 'category');
+           ->leftJoin('categorization.category', 'category')
+           ->orderBy('post.datePublished', 'DESC');
         $options = array_merge($options, array('category.name' => $categoryName));
         $this->generatePostQueryOptions($qb, $options);
 

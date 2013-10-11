@@ -276,6 +276,23 @@ class DoctrineWiringTest extends TestCase
     }
 
     /**
+     * Posts should be sorted by date published with latest first
+     */
+    public function testPostsAreSorted()
+    {
+        $this->contextBlogWithTwoPostsOneInACategory();
+        $this->post1->publish();
+        sleep(1);
+        $this->post2->publish();
+        $this->manager->commit();
+
+        $posts = $this->manager->getPosts(array('published' => true));
+        $this->assertEquals(2, count($posts));
+        $this->assertEquals($this->post2, $posts[0]);
+        $this->assertEquals($this->post1, $posts[1]);
+    }
+
+    /**
      * Retrieving published posts in a category
      */
     public function testGetAllPublishedPostsInACategory()
