@@ -232,11 +232,11 @@ class Manager
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->add('select', 'post');
-        $qb->add('from', 'Asar\Blog\Post post');
-        $qb->add('where', 'post.blog = ?1 AND post.id = ?2');
-        $qb->setParameter(1, $this->getCurrentBlog()->getId());
-        $qb->setParameter(2, $id);
+        $qb->select('post')
+           ->from('Asar\Blog\Post', 'post')
+           ->where('post.blog = :blog AND post.id = :post')
+           ->setParameter(':blog', $this->getCurrentBlog()->getId())
+           ->setParameter(':post', $id);
 
         $result = $qb->getQuery()->getResult();
 
@@ -260,41 +260,69 @@ class Manager
     /**
      * Retrieves all posts
      *
+     * @param array $options post query options
+     *
      * @return ArrayCollection the posts in the current blog
      */
-    public function getPosts()
+    public function getPosts($options = array())
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->add('select', 'post');
-        $qb->add('from', 'Asar\Blog\Post post');
-        $qb->add('where', 'post.blog = ?1');
-        $qb->setParameter(1, $this->getCurrentBlog()->getId());
+        $qb->select('post')
+           ->from('Asar\Blog\Post', 'post');
+        $this->generatePostQueryOptions($qb, $options);
 
-        $query = $qb->getQuery();
+        return $qb->getQuery()->getResult();
+    }
 
-        return $query->getResult();
+    protected function generatePostQueryOptions($qb, $options)
+    {
+        $whereClause = 'post.blog = :blog';
+        foreach ($options as $field => $value) {
+            $fieldName = $this->generateFieldName('post', $field);
+            $fieldParam = $this->generateFieldParam($field);
+            $whereClause .= " AND $fieldName = :$fieldParam";
+        }
+        $qb->where($whereClause)
+           ->setParameter(':blog', $this->getCurrentBlog()->getId());
+        foreach ($options as $field => $value) {
+            $fieldParam = $this->generateFieldParam($field);
+            $qb->setParameter(":$fieldParam", $value);
+        }
+    }
+
+    protected function generateFieldName($prefix, $field)
+    {
+        return strpos($field, '.') > 0 ? $field : "$prefix.$field";
+    }
+
+    protected function generateFieldParam($field)
+    {
+        if (strpos($field, '.') > -1) {
+            return  preg_replace("/\.(.)/e", "strtoupper('\\1')", $field);
+        }
+
+        return $field;
     }
 
     /**
      * Retrieves all post for a category
      *
      * @param string $categoryName the name of the category
+     * @param array  $options      post query options
      *
      * @return ArrayCollection $posts the posts in the category
      */
-    public function getPostsInCategory($categoryName)
+    public function getPostsInCategory($categoryName, $options = array())
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->add('select', 'post');
-        $qb->add('from', 'Asar\Blog\Post post');
-
-        $qb->leftJoin('post.categorization', 'categorization');
-        $qb->leftJoin('categorization.category', 'category');
-        $qb->add('where', 'post.blog = ?1 AND category.name = ?2');
-        $qb->setParameter(1, $this->getCurrentBlog()->getId());
-        $qb->setParameter(2, $categoryName);
+        $qb->select('post')
+           ->from('Asar\Blog\Post', 'post')
+           ->leftJoin('post.categorization', 'categorization')
+           ->leftJoin('categorization.category', 'category');
+        $options = array_merge($options, array('category.name' => $categoryName));
+        $this->generatePostQueryOptions($qb, $options);
 
         $query = $qb->getQuery();
 

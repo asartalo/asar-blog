@@ -43,9 +43,16 @@ class DoctrineWiringTest extends TestCase
         $tool->createSchema($classes);
     }
 
-    protected function createBasicBlog()
+    protected function contextBasicBlog()
     {
-        return $this->manager->newBlog('FooBlog', array('description' => 'The foo blog'));
+        $this->blog = $this->manager->newBlog('FooBlog', array('description' => 'The foo blog'));
+
+        return $this->blog;
+    }
+
+    private function createTestAuthor()
+    {
+        return $this->manager->newAuthor('Pedro', 'pedro@example.com');
     }
 
     private function writeAPost($author, $title = 'My first Post')
@@ -67,7 +74,7 @@ class DoctrineWiringTest extends TestCase
      */
     public function testCreatingABlog()
     {
-        $blog = $this->createBasicBlog();
+        $blog = $this->contextBasicBlog();
         $this->assertEquals('FooBlog', $blog->getName());
         $this->assertEquals('The foo blog', $blog->getDescription());
     }
@@ -77,7 +84,7 @@ class DoctrineWiringTest extends TestCase
      */
     public function testCommitsChanges()
     {
-        $blog = $this->createBasicBlog();
+        $blog = $this->contextBasicBlog();
         $this->manager->commit();
         $blog = $this->manager->getBlog('FooBlog');
         $this->assertEquals('FooBlog', $blog->getName());
@@ -89,17 +96,11 @@ class DoctrineWiringTest extends TestCase
      */
     public function testGetABlogById()
     {
-        $blog = $this->createBasicBlog();
+        $blog = $this->contextBasicBlog();
         $this->manager->commit();
-        //$this->manager = Manager::createManager();
         $blog = $this->manager->getBlog(1);
         $this->assertEquals('FooBlog', $blog->getName());
         $this->assertEquals('The foo blog', $blog->getDescription());
-    }
-
-    private function createTestAuthor()
-    {
-        return $this->manager->newAuthor('Pedro', 'pedro@example.com');
     }
 
     /**
@@ -117,7 +118,7 @@ class DoctrineWiringTest extends TestCase
      */
     public function testGettingAnAuthor()
     {
-        $blog = $this->createBasicBlog();
+        $blog = $this->contextBasicBlog();
         $this->createTestAuthor();
         $this->manager->commit();
         $author = $this->manager->getAuthor('Pedro');
@@ -129,7 +130,7 @@ class DoctrineWiringTest extends TestCase
      */
     public function testWritingAPost()
     {
-        $this->createBasicBlog();
+        $this->contextBasicBlog();
         $author = $this->createTestAuthor();
         $this->manager->commit();
         $post = $this->writeAPost($author);
@@ -142,7 +143,7 @@ class DoctrineWiringTest extends TestCase
      */
     public function testEditingAPost()
     {
-        $this->createBasicBlog();
+        $this->contextBasicBlog();
         $author = $this->createTestAuthor();
         $this->manager->commit();
         $post = $this->writeAPost($author);
@@ -166,7 +167,7 @@ class DoctrineWiringTest extends TestCase
      */
     public function testRetrievingAPost()
     {
-        $this->createBasicBlog();
+        $this->contextBasicBlog();
         $author = $this->createTestAuthor();
         $this->manager->commit();
         $this->writeAPost($author);
@@ -181,11 +182,31 @@ class DoctrineWiringTest extends TestCase
      */
     public function testCreatingACategory()
     {
-        $this->createBasicBlog();
+        $this->contextBasicBlog();
         $this->manager->commit();
         $this->manager->manage('FooBlog');
         $category = $this->manager->newCategory('foo');
         $this->assertEquals('foo', $category->getName());
+    }
+
+    private function contextBlogWithCategory($category = 'fooCategory')
+    {
+        $this->contextBasicBlog();
+        $this->createTestAuthor();
+        $this->manager->commit();
+        $this->manager->manage('FooBlog');
+        $this->manager->newCategory($category);
+        $this->manager->commit();
+    }
+
+    private function contextBlogWithTwoPostsOneInACategory()
+    {
+        $this->contextBlogWithCategory();
+        $this->author = $this->manager->getAuthor('Pedro');
+        $this->post1 = $this->writeAPost($this->author);
+        $this->post2 = $this->writeAPost($this->author, "Woo");
+        $this->manager->addToCategory('fooCategory', $this->post2);
+        $this->manager->commit();
     }
 
     /**
@@ -193,20 +214,11 @@ class DoctrineWiringTest extends TestCase
      */
     public function testCategorizingAPost()
     {
-        $this->createBasicBlog();
-        $this->createTestAuthor();
-        $this->manager->commit();
-        $this->manager->manage('FooBlog');
-        $this->manager->newCategory('fooCategory');
-        $this->manager->commit();
-        $author = $this->manager->getAuthor('Pedro');
-        $post1 = $this->writeAPost($author);
-        $post2 = $this->writeAPost($author, "Woo");
-        $this->manager->addToCategory('fooCategory', $post2);
-        $this->manager->commit();
+        $this->contextBlogWithTwoPostsOneInACategory();
+
         $posts = $this->manager->getPostsInCategory('fooCategory');
         $this->assertEquals(1, count($posts));
-        $this->assertEquals($post2, $posts[0]);
+        $this->assertEquals($this->post2, $posts[0]);
     }
 
     /**
@@ -214,22 +226,46 @@ class DoctrineWiringTest extends TestCase
      */
     public function testGetAllPosts()
     {
-        $this->createBasicBlog();
-        $this->createTestAuthor();
-        $this->manager->commit();
-        $this->manager->manage('FooBlog');
-        $this->manager->newCategory('fooCategory');
-        $this->manager->commit();
-        $author = $this->manager->getAuthor('Pedro');
-        $post1 = $this->writeAPost($author);
-        $post2 = $this->writeAPost($author, "Woo");
-        $this->manager->addToCategory('fooCategory', $post2);
-        $this->manager->commit();
+        $this->contextBlogWithTwoPostsOneInACategory();
 
         $posts = $this->manager->getPosts();
         $this->assertEquals(2, count($posts));
-        $this->assertEquals($post1, $posts[0]);
-        $this->assertEquals($post2, $posts[1]);
+        $this->assertEquals($this->post1, $posts[0]);
+        $this->assertEquals($this->post2, $posts[1]);
+    }
+
+    /**
+     * Retrieving published posts
+     */
+    public function testGetAllPublishedPosts()
+    {
+        $this->contextBlogWithTwoPostsOneInACategory();
+
+        $this->post1->publish();
+        $this->manager->commit();
+
+        $posts = $this->manager->getPosts(array('published' => true));
+        $this->assertEquals(1, count($posts));
+        $this->assertEquals($this->post1, $posts[0]);
+    }
+
+    /**
+     * Retrieving published posts in a category
+     */
+    public function testGetAllPublishedPostsInACategory()
+    {
+        $this->contextBlogWithTwoPostsOneInACategory();
+
+        $post3 = $this->writeAPost($this->author, "Woo");
+        $this->manager->addToCategory('fooCategory', $post3);
+        $this->post2->publish();
+        $this->manager->commit();
+
+        $posts = $this->manager->getPostsInCategory(
+            'fooCategory', array('published' => true)
+        );
+        $this->assertEquals(1, count($posts));
+        $this->assertEquals($this->post2, $posts[0]);
     }
 
 }

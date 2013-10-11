@@ -49,7 +49,7 @@ class Post
     /**
      * @Column(type="boolean")
      */
-    private $publishStatus = false;
+    private $published = false;
 
     /**
      * @Column(type="datetime", nullable=true)
@@ -138,7 +138,7 @@ class Post
      */
     public function isPublished()
     {
-        return $this->publishStatus;
+        return $this->published;
     }
 
     /**
@@ -147,7 +147,7 @@ class Post
     public function publish()
     {
         $this->datePublished = new \DateTime;
-        $this->publishStatus = true;
+        $this->published = true;
     }
 
     /**
