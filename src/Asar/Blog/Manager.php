@@ -12,6 +12,7 @@ namespace Asar\Blog;
 
 use Dimple\Container;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * Manages blog
@@ -275,12 +276,26 @@ class Manager
      */
     public function getPosts($options = array())
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $paginate = false;
 
+        if (isset($options['paginateBy'])) {
+            $perPage = $options['paginateBy'];
+            $paginate = true;
+        }
+        unset($options['paginateBy']);
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('post')
            ->from('Asar\Blog\Post', 'post')
            ->orderBy('post.datePublished', 'DESC');
         $this->generatePostQueryOptions($qb, $options);
+
+        if ($paginate) {
+            return new Pagination(
+                new Paginator($qb->getQuery(), false),
+                $perPage
+            );
+        }
 
         return $qb->getQuery()->getResult();
     }
@@ -325,6 +340,14 @@ class Manager
      */
     public function getPostsInCategory($categoryName, $options = array())
     {
+        $paginate = false;
+
+        if (isset($options['paginateBy'])) {
+            $perPage = $options['paginateBy'];
+            $paginate = true;
+        }
+        unset($options['paginateBy']);
+
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('post')
@@ -335,9 +358,14 @@ class Manager
         $options = array_merge($options, array('category.name' => $categoryName));
         $this->generatePostQueryOptions($qb, $options);
 
-        $query = $qb->getQuery();
+        if ($paginate) {
+            return new Pagination(
+                new Paginator($qb->getQuery(), false),
+                $perPage
+            );
+        }
 
-        return $query->getResult();
+        return $qb->getQuery()->getResult();
     }
 
 }

@@ -311,4 +311,24 @@ class DoctrineWiringTest extends TestCase
         $this->assertEquals($this->post2, $posts[0]);
     }
 
+    /**
+     * Paginating through posts
+     */
+    public function testPostPagination()
+    {
+        $this->contextBlogWithTwoPostsOneInACategory();
+
+        for ($i=0; $i < 9; $i++) {
+            $this->writeAPost($this->author, "Woo $i");
+        }
+        $this->manager->commit();
+
+        $posts = $this->manager->getPosts(array('paginateBy' => 3))->page(1);
+        $i = 0;
+        foreach ($posts as $post) {
+            $i++;
+        }
+        $this->assertEquals(3, $i);
+    }
+
 }
