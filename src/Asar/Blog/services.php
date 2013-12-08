@@ -48,6 +48,9 @@ $c['doctrine.config'] = function($c) {
     if (isset($c['doctrine.proxyDir'])) {
         $config->setProxyDir($c['doctrine.proxyDir']);
         $config->setProxyNamespace('Asar\Blog\Proxies');
+        $config->setAutoGenerateProxyClasses(false);
+    } else {
+        $config->setAutoGenerateProxyClasses(true);
     }
 
     return $config;
