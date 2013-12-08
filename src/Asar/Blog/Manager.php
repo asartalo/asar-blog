@@ -61,7 +61,7 @@ class Manager
 
     protected static function createContainer()
     {
-        return new Container(__DIR__ . DIRECTORY_SEPARATOR . 'services.php');
+        return new Container(self::getServicesPath());
     }
 
     /**
