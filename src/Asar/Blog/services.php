@@ -42,7 +42,12 @@ $c['doctrine.entityManager'] = function($c) {
 };
 
 $c['doctrine.config'] = function($c) {
-    return \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
+    $config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
         array(__DIR__), $c['isDevMode']
     );
+    if (isset($c['doctrine.proxyDir'])) {
+        $config->setProxyDir($c['doctrine.proxyDir']);
+    }
+
+    return $config;
 };
