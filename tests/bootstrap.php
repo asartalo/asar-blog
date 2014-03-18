@@ -8,6 +8,9 @@
 * file that was distributed with this source code.
 */
 
+// Set the timezone manually...
+date_default_timezone_set('Asia/Manila');
+
 $srcPath = realpath(__DIR__ . '/../src');
 $vendorPath = realpath(__DIR__ . '/../vendor');
 $testDataPath = realpath(__DIR__) . DIRECTORY_SEPARATOR . 'data';
