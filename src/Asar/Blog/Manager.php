@@ -324,7 +324,13 @@ class Manager
     protected function generateFieldParam($field)
     {
         if (strpos($field, '.') > -1) {
-            return  preg_replace("/\.(.)/e", "strtoupper('\\1')", $field);
+            return  preg_replace_callback(
+                "/\.(.)/",
+                function($m) {
+                    strtoupper($m[1]);
+                },
+                $field
+            );
         }
 
         return $field;
